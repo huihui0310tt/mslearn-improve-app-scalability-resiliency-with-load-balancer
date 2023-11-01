@@ -11,7 +11,7 @@ az network vnet create \
     --resource-group "${ResourceGroup}" \
     --name "${StudentID}bePortalVnet" \
     --subnet-name "${StudentID}bePortalSubnet" \
-    --tags "$StudentID=LB"
+    --tags "${StudentID}=LB"
 
 # Create a Network Security Group
 echo '------------------------------------------'
@@ -19,7 +19,7 @@ echo 'Creating a Network Security Group'
 az network nsg create \
     --resource-group "${ResourceGroup}" \
     --name "${StudentID}bePortalNSG" \
-    --tags "$StudentID=LB"
+    --tags "${StudentID}=LB"
 
 # Add inbound rule on port 80
 echo '------------------------------------------'
@@ -48,7 +48,7 @@ for i in `seq 1 2`; do
     --vnet-name "${StudentID}bePortalVnet" \
     --subnet "${StudentID}bePortalSubnet" \
     --network-security-group "${StudentID}bePortalNSG" \
-    --tags "$StudentID=LB"
+    --tags "${StudentID}=LB"
 done 
 
 # Create an availability set
@@ -57,7 +57,7 @@ echo 'Creating an availability set'
 az vm availability-set create \
     -n "${StudentID}portalAvailabilitySet" \
     -g "${ResourceGroup}" \
-    --tags "$StudentID=LB"
+    --tags "${StudentID}=LB"
 
 # Create 2 VM's from a template
 for i in `seq 1 2`; do
@@ -72,7 +72,7 @@ for i in `seq 1 2`; do
         --availability-set "${StudentID}portalAvailabilitySet" \
         --generate-ssh-keys \
         --custom-data cloud-init.txt \
-        --tags "$StudentID=LB"
+        --tags "${StudentID}=LB"
 done
 
 # Done
