@@ -11,7 +11,7 @@ az network vnet create \
     --resource-group "${ResourceGroup}" \
     --name "${StudentID}bePortalVnet" \
     --subnet-name "${StudentID}bePortalSubnet" \
-    --tags "${StudentID}"="LB"
+    --tags { "${StudentID}" : LB"}
 
 # Create a Network Security Group
 echo '------------------------------------------'
