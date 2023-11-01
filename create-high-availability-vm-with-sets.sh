@@ -8,23 +8,25 @@ date
 echo '------------------------------------------'
 echo 'Creating a Virtual Network for the VMs'
 az network vnet create \
-    --resource-group $RgName \
-    --name bePortalVnet \
-    --subnet-name bePortalSubnet 
+    --resource-group "${ResourceGroup}" \
+    --name "${StudentID}bePortalVnet" \
+    --subnet-name "${StudentID}bePortalSubnet" \
+    --tags "${Tags}"
 
 # Create a Network Security Group
 echo '------------------------------------------'
 echo 'Creating a Network Security Group'
 az network nsg create \
-    --resource-group $RgName \
-    --name bePortalNSG 
+    --resource-group "${ResourceGroup}" \
+    --name "${StudentID}bePortalNSG" \
+    --tags "${Tags}"
 
 # Add inbound rule on port 80
 echo '------------------------------------------'
 echo 'Allowing access on port 80'
 az network nsg rule create \
-    --resource-group $RgName \
-    --nsg-name bePortalNSG \
+    --resource-group "${ResourceGroup}" \
+    --nsg-name "${StudentID}bePortalNSG" \
     --name Allow-80-Inbound \
     --priority 110 \
     --source-address-prefixes '*' \
@@ -41,17 +43,21 @@ for i in `seq 1 2`; do
   echo '------------------------------------------'
   echo 'Creating webNic'$i
   az network nic create \
-    --resource-group $RgName \
-    --name webNic$i \
-    --vnet-name bePortalVnet \
-    --subnet bePortalSubnet \
-    --network-security-group bePortalNSG
+    --resource-group "${ResourceGroup}" \
+    --name "${StudentID}webNic$i" \
+    --vnet-name "${StudentID}bePortalVnet" \
+    --subnet "${StudentID}bePortalSubnet" \
+    --network-security-group "${StudentID}bePortalNSG" \
+    --tags "${Tags}"
 done 
 
 # Create an availability set
 echo '------------------------------------------'
 echo 'Creating an availability set'
-az vm availability-set create -n portalAvailabilitySet -g $RgName
+az vm availability-set create \
+    -n "${StudentID}portalAvailabilitySet" \
+    -g "${ResourceGroup}" \
+    --tags "${Tags}"
 
 # Create 2 VM's from a template
 for i in `seq 1 2`; do
@@ -59,13 +65,14 @@ for i in `seq 1 2`; do
     echo 'Creating webVM'$i
     az vm create \
         --admin-username azureuser \
-        --resource-group $RgName \
-        --name webVM$i \
-        --nics webNic$i \
+        --resource-group "${ResourceGroup}" \
+        --name "${StudentID}webVM$i" \
+        --nics "${StudentID}webNic$i" \
         --image Ubuntu2204 \
-        --availability-set portalAvailabilitySet \
+        --availability-set "${StudentID}portalAvailabilitySet" \
         --generate-ssh-keys \
-        --custom-data cloud-init.txt
+        --custom-data cloud-init.txt \
+        --tags "${Tags}"
 done
 
 # Done
